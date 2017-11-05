@@ -1,43 +1,53 @@
-package com.toknfc.nfctok
+package com.toknfc.nfctok.views.activities
 
-import android.content.Context
-import android.content.Intent
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
 import android.nfc.NfcAdapter
-import android.nfc.NfcEvent
-import android.nfc.NfcManager
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_home.buttonAddMessage
-import kotlinx.android.synthetic.main.activity_home.txtBoxAddMessage
-import kotlinx.android.synthetic.main.activity_home.txtMessageToSend
-import kotlinx.android.synthetic.main.activity_home.txtMessagesReceived
-import java.lang.IllegalStateException
-import java.nio.charset.Charset
+import com.toknfc.nfctok.R
+import com.toknfc.nfctok.R.layout
+import com.toknfc.nfctok.core.BasicFragmentManager
+import com.toknfc.nfctok.core.CoreActivity
+import com.toknfc.nfctok.presenters.HomeActivityPresenter
+import com.toknfc.nfctok.views.fragments.HomeFragment
 
-class HomeActivity : AppCompatActivity(),
-    NfcAdapter.OnNdefPushCompleteCallback, NfcAdapter.CreateNdefMessageCallback {
+class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
+  // , NfcAdapter.OnNdefPushCompleteCallback, NfcAdapter.CreateNdefMessageCallback
 
   private var messagesToSend: ArrayList<String> = arrayListOf()
   private var receivedMessages: ArrayList<String> = arrayListOf()
   private lateinit var nfcAdapter: NfcAdapter
+  private val presenter: HomeActivityPresenter by lazy {
+    HomeActivityPresenter(this)
+  }
+
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_home)
-    val nfcManager: NfcManager = this.getSystemService(Context.NFC_SERVICE) as NfcManager
+    setContentView(layout.activity_home)
+   /* val nfcManager: NfcManager = this.getSystemService(Context.NFC_SERVICE) as NfcManager
     if (nfcManager.defaultAdapter != null && nfcManager.defaultAdapter.isEnabled) {
-      nfcAdapter = NfcAdapter.getDefaultAdapter(applicationContext)
+
+      *//*nfcAdapter = NfcAdapter.getDefaultAdapter(applicationContext)
       nfcAdapter.setNdefPushMessageCallback(this, this)
       nfcAdapter.setOnNdefPushCompleteCallback(this, this)
-      buttonAddMessage.setOnClickListener { addMessages() }
-    }
+      buttonAddMessage.setOnClickListener { addMessages() }*//*
+    } else {
 
+    }
+*/
   }
 
-  override fun onSaveInstanceState(outState: Bundle) {
+  override fun onStart() {
+    super.onStart()
+    presenter.init()
+  }
+
+  override fun showHomeScreen() {
+    // TODO should inject this
+    val fm = BasicFragmentManager(supportFragmentManager, R.id.activityHomeFlContainer)
+    fm.replaceFragment(HomeFragment.getInstance())
+  }
+
+  /*override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
     outState.apply {
       putStringArrayList("messagesToSend", messagesToSend)
@@ -83,15 +93,15 @@ class HomeActivity : AppCompatActivity(),
     return NdefMessage(nfcRecords)
   }
 
-  override fun onNewIntent(intent: Intent) {
+  *//*override fun onNewIntent(intent: Intent) {
     handleNfcIntent(intent)
-  }
+  }*//*
 
-  override fun onResume() {
+  *//*override fun onResume() {
     super.onResume()
     updateViews()
     handleNfcIntent(intent)
-  }
+  }*//*
 
   private fun createRecords(): Array<NdefRecord> {
     return Array(messagesToSend.size + 1, {ind -> mes(ind)} )
@@ -99,14 +109,14 @@ class HomeActivity : AppCompatActivity(),
 
   private fun mes(index: Int): NdefRecord {
     if (index == messagesToSend.size) {
-      /**
+      *//**
        * Note: This doesn’t make the transaction secure or ensure that my app will be the one to open
        * the record. Including the application record only further specifies our preference to the OS.
        * If another activity that is currently in the foreground calls NfcAdapter.enableForegroundDispatch
        * it can catch the intent before it gets to us, there is no way to prevent this except to have
        * our activity in the foreground. Still, this is as close as we can get to ensuring that
        * our application is the one that processes this data.
-       */
+       *//*
       return  NdefRecord.createApplicationRecord(packageName)
     }
     val payload: ByteArray = messagesToSend[index].toByteArray(Charset.forName("UTF-8"))
@@ -132,5 +142,5 @@ class HomeActivity : AppCompatActivity(),
     } else {
       Toast.makeText(this, "Received Blank Parcel", Toast.LENGTH_LONG).show()
     }
-  }
+  }*/
 }

@@ -5,7 +5,7 @@ import com.toknfc.nfctok.core.FragmentPresenter
 /**
  * Created by Chidi Justice on 05/11/2017.
  */
-class HomePresenter(private val view: View) : FragmentPresenter {
+class HomeFragmentPresenter(private val view: View) : FragmentPresenter {
 
 
   override fun dispose() {
