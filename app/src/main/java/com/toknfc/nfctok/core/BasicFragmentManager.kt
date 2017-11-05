@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager
 /**
  * Created by Chidi Justice on 05/11/2017.
  */
-class FragmentManager(private val fragmentManager: FragmentManager,
+class BasicFragmentManager(private val fragmentManager: FragmentManager,
     private val fragmentContainerId: Int) {
   // TODO: Could implement a back stack I can manage later
 
@@ -23,7 +23,7 @@ class FragmentManager(private val fragmentManager: FragmentManager,
         .commit()
   }
 
-  fun onBackPressed(): Boolean {
+  /*fun onBackPressed(): Boolean {
     if (fragmentManager.backStackEntryCount > 1) {
       popUp()
       val currentFragment = getCurrentFragment()
@@ -34,19 +34,19 @@ class FragmentManager(private val fragmentManager: FragmentManager,
     }
 
     return false
-  }
+  }*/
 
   /**
    * Getting current activity loaded in the activity
    */
-  fun getCurrentFragment(): CoreFragment? {
+  /*fun getCurrentFragment(): CoreFragment? {
     val fragmentByTag = fragmentManager.findFragmentByTag(fragmentTagStack.getActiveTag())
     return if (fragmentByTag != null) {
       fragmentByTag as IFragment
     } else {
       null
     }
-  }
+  }*/
 
   fun popUp() {
     fragmentManager.popBackStackImmediate()

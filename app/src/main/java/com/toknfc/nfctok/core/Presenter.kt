@@ -1,7 +1,15 @@
 package com.toknfc.nfctok.core
 
 /**
- * Created by Chidi Justice on 05/11/2017.
+ * Created by Chidi Justice
+ *
  */
-class Presenter {
+interface Presenter {
+
+  fun dispose()
+
+  interface View {
+
+    fun handleError(throwable: Throwable)
+  }
 }
