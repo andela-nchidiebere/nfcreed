@@ -2,9 +2,9 @@ package com.toknfc.nfctok.views.fragments
 
 import android.app.PendingIntent
 import android.content.Intent
-import android.nfc.NdefMessage
+import android.content.IntentFilter
+import android.content.IntentFilter.MalformedMimeTypeException
 import android.nfc.NfcAdapter
-import android.nfc.NfcEvent
 import android.os.Bundle
 import android.provider.Settings
 import android.support.design.widget.Snackbar
@@ -16,13 +16,9 @@ import com.toknfc.nfctok.R
 import com.toknfc.nfctok.R.string
 import com.toknfc.nfctok.core.CoreFragment
 import com.toknfc.nfctok.core.HOME_FRAGMENT_TAG
+import com.toknfc.nfctok.core.MIME_TYPE
 import com.toknfc.nfctok.presenters.HomeFragmentPresenter
 import com.toknfc.nfctok.views.activities.HomeActivity
-import kotlinx.android.synthetic.main.fragment_home.fragmentHomeBtnRead
-import kotlinx.android.synthetic.main.fragment_home.fragmentHomeBtnWrite
-import android.content.IntentFilter
-import android.content.IntentFilter.MalformedMimeTypeException
-import com.toknfc.nfctok.core.MIME_TYPE
 
 
 /**
@@ -38,10 +34,12 @@ class HomeFragment : CoreFragment(), HomeFragmentPresenter.View {
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
       savedInstanceState: Bundle?): View? {
-    val layoutView = inflater.inflate(R.layout.fragment_home, container, false)
+    return inflater.inflate(R.layout.fragment_home, container, false)
+  }
+
+  override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
     presenter.validateNfcDevice()
-    presenter.initViewListeners()
-    return layoutView
   }
 
   override fun getName(): String {
@@ -79,15 +77,9 @@ class HomeFragment : CoreFragment(), HomeFragmentPresenter.View {
     (context as HomeActivity).finish()
   }
 
-  override fun initializeListeners() {
-    //fragmentHomeBtnRead.setOnClickListener { presenter.scanForNfcTag() }
-    //fragmentHomeBtnWrite.setOnClickListener { showWriteToNfcTagScreen() }
-  }
-
   override fun toastNotice(message: String) {
-    Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-    val notNullView = view ?: return
-    Snackbar.make(notNullView, message, Snackbar.LENGTH_LONG)
+    val nonNullView: View = view?: return
+    Snackbar.make(nonNullView, message, Snackbar.LENGTH_INDEFINITE)
         .setAction(getString(string.turn_on_nfc), {
           startSettingsIntent()
         }).show()
@@ -106,7 +98,6 @@ class HomeFragment : CoreFragment(), HomeFragmentPresenter.View {
         intent, 0)
     val techList = arrayOf<Array<String>>()
     val filters: Array<IntentFilter> = Array(1) { makeIntentFilter() }
-    //TODO.Hate that I have to handle null case for the adapter. I require it to be not null always
     nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, filters, techList)
 
   }
@@ -123,31 +114,9 @@ class HomeFragment : CoreFragment(), HomeFragmentPresenter.View {
       intentFilter.addDataType(MIME_TYPE)
     } catch (mlf: MalformedMimeTypeException) {
       handleError(RuntimeException())
-      throw RuntimeException("Check your mime type.")
+      throw RuntimeException(getString(string.check_mime_type))
     }
     return intentFilter
-  }
-
-  override fun startReadingNfcTag() {
-  }
-
-  override fun showSearchForTagProgress() {
-  }
-
-  /**
-   * When reading an nfc tag (which should be run on background), show this progressbar
-   */
-  override fun showReadingFromTagProgress() {
-  }
-
-  override fun dismissProgress(progressId: Int) {
-
-  }
-
-  /**
-   * Navigates to another screen showing information read from nfc tag
-   */
-  override fun showReadTagInfoScreen() {
   }
 
   /**

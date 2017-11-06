@@ -23,12 +23,6 @@ class HomeActivityPresenter(private val view: View) : Presenter {
    * @param payload is the payload from an NdefRecord
    */
   fun readToDatabase(payload: ByteArray): String {
-    /**
-     * See NFC forum specification for "Text Record Type Definition" at 3.2.1
-     * bit_7 defines encoding
-     * bit_6 reserved for future use, must be 0
-     * bit_5..0 length of IANA language code
-     */
     val firstPayloadItem: Byte = payload[0]
     val bitVal = 128
     val payloadTextEncoding: Charset = if (firstPayloadItem.compareTo(
@@ -37,6 +31,10 @@ class HomeActivityPresenter(private val view: View) : Presenter {
     val text = String(payload, languageCodeLength + 1, payload.size - languageCodeLength - 1, payloadTextEncoding)
     Log.d("ghjd", text)
     return text
+  }
+
+  fun handlePayloadFromNfcTag(message: String) {
+
   }
 
   override fun dispose() {
