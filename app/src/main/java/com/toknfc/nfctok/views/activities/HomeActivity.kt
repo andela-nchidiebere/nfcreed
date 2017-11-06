@@ -1,6 +1,5 @@
 package com.toknfc.nfctok.views.activities
 
-import android.nfc.NfcAdapter
 import android.os.Bundle
 import com.toknfc.nfctok.R
 import com.toknfc.nfctok.R.layout
@@ -8,32 +7,22 @@ import com.toknfc.nfctok.core.BasicFragmentManager
 import com.toknfc.nfctok.core.CoreActivity
 import com.toknfc.nfctok.presenters.HomeActivityPresenter
 import com.toknfc.nfctok.views.fragments.HomeFragment
+import com.toknfc.nfctok.views.fragments.WriteToNfcTagFragment
 
 class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
-  // , NfcAdapter.OnNdefPushCompleteCallback, NfcAdapter.CreateNdefMessageCallback
 
-  private var messagesToSend: ArrayList<String> = arrayListOf()
-  private var receivedMessages: ArrayList<String> = arrayListOf()
-  private lateinit var nfcAdapter: NfcAdapter
+  // TODO should inject this maybe
   private val presenter: HomeActivityPresenter by lazy {
     HomeActivityPresenter(this)
+  }
+  private val fm: BasicFragmentManager by lazy {
+    BasicFragmentManager(supportFragmentManager, R.id.activityHomeFlContainer)
   }
 
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(layout.activity_home)
-   /* val nfcManager: NfcManager = this.getSystemService(Context.NFC_SERVICE) as NfcManager
-    if (nfcManager.defaultAdapter != null && nfcManager.defaultAdapter.isEnabled) {
-
-      *//*nfcAdapter = NfcAdapter.getDefaultAdapter(applicationContext)
-      nfcAdapter.setNdefPushMessageCallback(this, this)
-      nfcAdapter.setOnNdefPushCompleteCallback(this, this)
-      buttonAddMessage.setOnClickListener { addMessages() }*//*
-    } else {
-
-    }
-*/
   }
 
   override fun onStart() {
@@ -42,9 +31,11 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
   }
 
   override fun showHomeScreen() {
-    // TODO should inject this
-    val fm = BasicFragmentManager(supportFragmentManager, R.id.activityHomeFlContainer)
     fm.replaceFragment(HomeFragment.getInstance())
+  }
+
+  override fun showWriteToNfcTagScreen() {
+    fm.replaceFragment(WriteToNfcTagFragment.getInstance())
   }
 
   /*override fun onSaveInstanceState(outState: Bundle) {

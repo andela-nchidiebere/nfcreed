@@ -17,5 +17,7 @@ class HomeActivityPresenter(private val view: View): Presenter {
 
   interface View {
     fun showHomeScreen()
+
+    fun showWriteToNfcTagScreen()
   }
 }
