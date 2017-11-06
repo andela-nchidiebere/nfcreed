@@ -9,7 +9,7 @@ import com.toknfc.nfctok.core.CoreFragment
 import com.toknfc.nfctok.core.WRITE_TO_NFC_TAG_FRAGMENT_TAG
 
 /**
- * Created by Chidi Justice on 05/11/2017.
+ * Created by Chidi Justice
  */
 class WriteToNfcTagFragment : CoreFragment() {
 

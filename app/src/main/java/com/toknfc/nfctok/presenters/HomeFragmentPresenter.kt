@@ -4,7 +4,7 @@ import com.toknfc.nfctok.core.FragmentPresenter
 import com.toknfc.nfctok.core.NFC_DEACTIVATED_MESSAGE
 
 /**
- * Created by Chidi Justice on 05/11/2017.
+ * Created by Chidi Justice
  */
 class HomeFragmentPresenter(private val view: View) : FragmentPresenter {
 
@@ -23,7 +23,6 @@ class HomeFragmentPresenter(private val view: View) : FragmentPresenter {
   }
 
   interface View: FragmentPresenter.View {
-
 
     fun showWriteToNfcTagScreen()
 
