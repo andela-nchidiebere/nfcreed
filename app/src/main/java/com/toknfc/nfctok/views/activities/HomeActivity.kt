@@ -1,17 +1,34 @@
 package com.toknfc.nfctok.views.activities
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.nfc.NdefMessage
+import android.nfc.NdefRecord
+import android.nfc.NfcAdapter
+import android.nfc.Tag
+import android.nfc.tech.Ndef
+import android.os.AsyncTask
 import android.os.Bundle
+import android.widget.Toast
 import com.toknfc.nfctok.R
 import com.toknfc.nfctok.R.layout
+import com.toknfc.nfctok.R.string
 import com.toknfc.nfctok.core.BasicFragmentManager
 import com.toknfc.nfctok.core.CoreActivity
+import com.toknfc.nfctok.core.MIME_TYPE
 import com.toknfc.nfctok.presenters.HomeActivityPresenter
 import com.toknfc.nfctok.views.fragments.HomeFragment
 import com.toknfc.nfctok.views.fragments.WriteToNfcTagFragment
+import java.io.UnsupportedEncodingException
+import java.util.Arrays
+import android.R.attr.tag
+
+
 
 class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
 
-  // TODO should inject this maybe
+  // TODO Refactor: should inject this maybe
   private val presenter: HomeActivityPresenter by lazy {
     HomeActivityPresenter(this)
   }
@@ -36,6 +53,78 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
 
   override fun showWriteToNfcTagScreen() {
     fm.replaceFragment(WriteToNfcTagFragment.getInstance())
+  }
+
+  override fun onNewIntent(intent: Intent) {
+    handleIntent(intent)
+  }
+
+  override fun handleIntent(intent: Intent) {
+    //TODO get current fragment and pass action to it
+    val action = intent.action
+    when (action) {
+      NfcAdapter.ACTION_NDEF_DISCOVERED -> {
+        val type = intent.type
+        if (type == MIME_TYPE) {
+          intent.apply {
+            val tag: Tag = getParcelableExtra(NfcAdapter.EXTRA_TAG)
+            NdefTask().execute(tag)
+          }
+        } else {
+          Toast.makeText(this, "Wrong mime type", Toast.LENGTH_SHORT).show()
+        }
+      }
+      NfcAdapter.ACTION_TECH_DISCOVERED -> {
+        intent.apply {
+          val tag: Tag = getParcelableExtra(NfcAdapter.EXTRA_TAG)
+          val techList: Array<String> = tag.techList
+          val sharedTech = Ndef::class.java.name
+          techList.first { tech -> sharedTech == tech }.run {
+            NdefTask().execute(tag)
+          }
+        }
+      }
+    }
+
+  }
+
+  /**
+   * Background task for reading tag to make it non blocking.
+   * TODO: Refactor process with Rxjava
+   *
+   * Intentionally allowing this to exist while activity exist so it is gabbage collected at the
+   * same time as when activity is destroyed.
+   */
+  @SuppressLint("StaticFieldLeak")
+  private inner class NdefTask: AsyncTask<Tag, Void, String>() {
+
+    override fun doInBackground(vararg params: Tag): String? {
+      val tag: Tag = params[0]
+      val ndef: Ndef? = Ndef.get(tag) ?: null
+      val ndefSupportedTag = checkNotNull(ndef) {
+        Toast.makeText(this@HomeActivity, getString(string.ndef_not_supported), Toast
+            .LENGTH_LONG).show()
+        return@checkNotNull getString(string.ndef_not_supported)
+      }
+      val ndefMesage: NdefMessage = ndefSupportedTag.cachedNdefMessage
+      val ndefRecords: Array<NdefRecord> = ndefMesage.records
+      ndefRecords.filter { record ->
+        record.tnf == NdefRecord.TNF_WELL_KNOWN &&
+            Arrays.equals(record.type, NdefRecord.RTD_TEXT)
+      }.map { record ->
+        return presenter.readToDatabase(record.payload)
+      }
+
+      return null
+    }
+
+    override fun onPostExecute(result: String?) {
+      result?.let {
+        Toast.makeText(this@HomeActivity, it, Toast.LENGTH_SHORT).show()
+      }
+    }
+
+
   }
 
   /*override fun onSaveInstanceState(outState: Bundle) {
@@ -100,14 +189,15 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
 
   private fun mes(index: Int): NdefRecord {
     if (index == messagesToSend.size) {
-      *//**
-       * Note: This doesn’t make the transaction secure or ensure that my app will be the one to open
-       * the record. Including the application record only further specifies our preference to the OS.
-       * If another activity that is currently in the foreground calls NfcAdapter.enableForegroundDispatch
-       * it can catch the intent before it gets to us, there is no way to prevent this except to have
-       * our activity in the foreground. Still, this is as close as we can get to ensuring that
-       * our application is the one that processes this data.
-       *//*
+      */
+  /**
+   * Note: This doesn’t make the transaction secure or ensure that my app will be the one to open
+   * the record. Including the application record only further specifies our preference to the OS.
+   * If another activity that is currently in the foreground calls NfcAdapter.enableForegroundDispatch
+   * it can catch the intent before it gets to us, there is no way to prevent this except to have
+   * our activity in the foreground. Still, this is as close as we can get to ensuring that
+   * our application is the one that processes this data.
+   *//*
       return  NdefRecord.createApplicationRecord(packageName)
     }
     val payload: ByteArray = messagesToSend[index].toByteArray(Charset.forName("UTF-8"))

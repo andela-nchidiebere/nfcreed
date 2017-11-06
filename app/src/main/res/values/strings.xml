@@ -2,6 +2,8 @@
   <string name="app_name">nfctok</string>
   <string name="no_nfc_adapter">Device doesn\'t have Nfc</string>
   <string name="turn_on_nfc">Turn on NFC</string>
+  <string name="check_mime_type">Check your mime type</string>
+  <string name="ndef_not_supported">NDEF is not supported by this Tag</string>
   <string-array name="roles_array">
     <item>Fellow</item>
     <item>STC</item>

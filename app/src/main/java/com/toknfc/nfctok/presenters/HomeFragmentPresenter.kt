@@ -20,7 +20,7 @@ class HomeFragmentPresenter(private val view: View) : FragmentPresenter {
       if (!view.isNfcCapable()) {
         view.toastNotice("NFC is deactivated")
       }
-    } catch (il: IllegalAccessException) {
+    } catch (il: IllegalArgumentException) {
       view.dismissProgress(0)
       view.closeApp()
     }
@@ -29,7 +29,6 @@ class HomeFragmentPresenter(private val view: View) : FragmentPresenter {
   fun scanForNfcTag(): Boolean {
     view.showSearchForTagProgress() // show progress indicating searching for tag and tell user
     // to bring device closer.
-
 
     return false
   }
@@ -59,6 +58,10 @@ class HomeFragmentPresenter(private val view: View) : FragmentPresenter {
     fun closeApp()
 
     fun toastNotice(message: String)
+
+    fun setupForeGroundDispatch()
+
+    fun stopForeGroundDispatch()
 
   }
 
