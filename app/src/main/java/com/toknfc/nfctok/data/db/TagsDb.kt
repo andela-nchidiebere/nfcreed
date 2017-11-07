@@ -8,10 +8,10 @@ import android.content.Context
 /**
  * Created by Chidi Justice
  */
-@Database(entities = arrayOf(), version = 1)
-abstract class TagsDb: RoomDatabase() {
+//@Database(entities = arrayOf(), version = 1)
+abstract class TagsDb{//: RoomDatabase() {
 
-  companion object {
+  /*companion object {
     val DB_NAME = "tags_db"
     var dbInstance: TagsDb? = null
 
@@ -22,5 +22,5 @@ abstract class TagsDb: RoomDatabase() {
       }
       return dbInstance
     }
-  }
+  }*/
 }

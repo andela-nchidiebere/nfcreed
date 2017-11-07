@@ -3,7 +3,7 @@ package com.toknfc.nfctok.core
 import android.support.v4.app.FragmentManager
 
 /**
- * Created by Chidi Justice on 05/11/2017.
+ * Created by Chidi Justice
  */
 class BasicFragmentManager(private val fragmentManager: FragmentManager,
     private val fragmentContainerId: Int) {
@@ -16,7 +16,8 @@ class BasicFragmentManager(private val fragmentManager: FragmentManager,
         .commit()
   }
 
-  fun replaceFragment(fragment: CoreFragment) {
+  fun replaceFragment(fragment: CoreFragment?) {
+    fragment ?: return
     fragmentManager.beginTransaction()
         .replace(fragmentContainerId, fragment, fragment.getName())
         .addToBackStack(fragment.getName())

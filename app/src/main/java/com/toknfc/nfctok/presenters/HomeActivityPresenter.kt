@@ -21,7 +21,15 @@ class HomeActivityPresenter(private val view: View) : Presenter {
    * Some edge cases, In a case where the same record is inserted twice
    */
   fun handlePayloadFromNfcTag(payload: String, hasId: ByteArray?) {
-
+    //1. navigate to tagInfo screen with the text.
+    view.openTagInfoScreen(payload)
+    /**
+     * Ensure that andela tags isn't saved multiple times. Each tag should have a unique ID,
+     * which should be used to distinguish them from each other. For Andela tags, first check
+     * that no id with its payload exists, before saving. For new ones, save an id to the tag,
+     * which would be used for distinquishing them in the db
+     */
+    //2. Save payload on the background
   }
 
   override fun dispose() {
@@ -32,6 +40,8 @@ class HomeActivityPresenter(private val view: View) : Presenter {
     fun showHomeScreen()
 
     fun showWriteToNfcTagScreen()
+
+    fun openTagInfoScreen(payload: String)
 
     fun handleIntent(intent: Intent)
   }

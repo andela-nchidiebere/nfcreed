@@ -10,11 +10,13 @@ import android.support.design.widget.Snackbar
 import android.widget.Toast
 import com.toknfc.nfctok.R
 import com.toknfc.nfctok.R.layout
+import com.toknfc.nfctok.core.BUNDLE_TAG_PAYLOAD
 import com.toknfc.nfctok.core.BasicFragmentManager
 import com.toknfc.nfctok.core.CoreActivity
 import com.toknfc.nfctok.core.MIME_TYPE
 import com.toknfc.nfctok.presenters.HomeActivityPresenter
 import com.toknfc.nfctok.views.fragments.HomeFragment
+import com.toknfc.nfctok.views.fragments.TagInformationFragment
 import com.toknfc.nfctok.views.fragments.WriteToNfcTagFragment
 import kotlinx.android.synthetic.main.activity_home.root
 import java.io.IOException
@@ -45,6 +47,12 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
 
   override fun showHomeScreen() {
     fm.replaceFragment(HomeFragment.getInstance())
+  }
+
+  override fun openTagInfoScreen(payload: String) {
+    val bundle = Bundle()
+    bundle.putString(BUNDLE_TAG_PAYLOAD, payload)
+    fm.replaceFragment(TagInformationFragment.getInstance(bundle))
   }
 
   override fun showWriteToNfcTagScreen() {
