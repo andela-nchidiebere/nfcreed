@@ -3,10 +3,22 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_blue_light">
 
 
-  <Button
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@android:color/white"
+      android:text="Place your tag under device"
+      android:textSize="24sp"
+      android:layout_centerInParent="true"
+      android:layout_centerHorizontal="true"
+      android:gravity="center"
+      android:layout_margin="40dp"/>
+
+ <!-- <Button
       android:layout_centerInParent="true"
       android:id="@+id/fragmentHomeBtnRead"
       android:layout_width="wrap_content"
@@ -30,6 +42,6 @@
       android:layout_height="52dp"
       android:layout_centerInParent="true"
       android:visibility="gone"
-      android:background="@color/colorPrimaryDark"/>
+      android:background="@color/colorPrimaryDark"/>-->
 
 </RelativeLayout>
