@@ -108,7 +108,7 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
             getSnackbar("Discovered NFC Tech with ${message.records.size} records").show()
           } catch (ile: IllegalStateException) {
             nfcIntent = this
-            getSnackbar("Tag is empty").setAction("Write to Tag?", {showWriteToNfcTagScreen()})
+            showWriteToNfcTagScreen()
           }
         }
       }
