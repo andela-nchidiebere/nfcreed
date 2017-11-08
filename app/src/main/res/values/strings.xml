@@ -4,6 +4,9 @@
   <string name="turn_on_nfc">Turn on NFC</string>
   <string name="check_mime_type">Check your mime type</string>
   <string name="ndef_not_supported">NDEF is not supported by this Tag</string>
+  <string name="connecterror">Error connecting for NFC Tag</string>
+  <string name="wrongMimeType">Wrong mime type</string>
+  <string name="nullRawMessage">RawMessages is null</string>
   <string-array name="roles_array">
     <item>Fellow</item>
     <item>STC</item>

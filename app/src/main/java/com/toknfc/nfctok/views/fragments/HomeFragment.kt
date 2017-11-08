@@ -1,9 +1,6 @@
 package com.toknfc.nfctok.views.fragments
 
-import android.app.PendingIntent
 import android.content.Intent
-import android.content.IntentFilter
-import android.content.IntentFilter.MalformedMimeTypeException
 import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.provider.Settings
@@ -16,7 +13,6 @@ import com.toknfc.nfctok.R
 import com.toknfc.nfctok.R.string
 import com.toknfc.nfctok.core.CoreFragment
 import com.toknfc.nfctok.core.HOME_FRAGMENT_TAG
-import com.toknfc.nfctok.core.MIME_TYPE
 import com.toknfc.nfctok.presenters.HomeFragmentPresenter
 import com.toknfc.nfctok.views.activities.HomeActivity
 
@@ -25,8 +21,6 @@ import com.toknfc.nfctok.views.activities.HomeActivity
  * Created by Chidi Justice
  */
 class HomeFragment : CoreFragment(), HomeFragmentPresenter.View {
-
-  private var nfcAdapter: NfcAdapter? = null
 
   private val presenter: HomeFragmentPresenter by lazy {
     HomeFragmentPresenter(this)
@@ -37,6 +31,9 @@ class HomeFragment : CoreFragment(), HomeFragmentPresenter.View {
     return inflater.inflate(R.layout.fragment_home, container, false)
   }
 
+  override fun handleError(throwable: Throwable) {
+  }
+
   override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     presenter.validateNfcDevice()
@@ -44,23 +41,6 @@ class HomeFragment : CoreFragment(), HomeFragmentPresenter.View {
 
   override fun getName(): String {
     return HOME_FRAGMENT_TAG
-  }
-
-  override fun onResume() {
-    super.onResume()
-    setupForeGroundDispatch()
-  }
-
-  override fun onPause() {
-    super.onPause()
-    stopForeGroundDispatch()
-  }
-
-  override fun handleError(throwable: Throwable) {
-    when (throwable) {
-      is RuntimeException -> Toast.makeText(context, getString(string.check_mime_type),
-          Toast.LENGTH_SHORT).show()
-    }
   }
 
   override fun isNfcCapable(): Boolean {
@@ -89,34 +69,6 @@ class HomeFragment : CoreFragment(), HomeFragmentPresenter.View {
   private fun startSettingsIntent() {
     val intent = Intent(Settings.ACTION_NFC_SETTINGS)
     startActivity(intent)
-  }
-
-  override fun setupForeGroundDispatch() {
-    val intent = Intent(activity.applicationContext, activity::class.java)
-    intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-    val pendingIntent: PendingIntent = PendingIntent.getActivity(activity.applicationContext, 0,
-        intent, 0)
-    val techList = arrayOf<Array<String>>()
-    val filters: Array<IntentFilter> = Array(1) { makeIntentFilter() }
-    nfcAdapter?.enableForegroundDispatch(activity, pendingIntent, filters, techList)
-
-  }
-
-  override fun stopForeGroundDispatch() {
-    nfcAdapter?.disableForegroundDispatch(activity)
-  }
-
-  private fun makeIntentFilter(): IntentFilter {
-    val intentFilter = IntentFilter()
-    intentFilter.addAction(NfcAdapter.ACTION_NDEF_DISCOVERED)
-    intentFilter.addCategory(Intent.CATEGORY_DEFAULT)
-    try {
-      intentFilter.addDataType(MIME_TYPE)
-    } catch (mlf: MalformedMimeTypeException) {
-      handleError(RuntimeException())
-      throw RuntimeException(getString(string.check_mime_type))
-    }
-    return intentFilter
   }
 
   override fun showWriteToNfcTagScreen() {

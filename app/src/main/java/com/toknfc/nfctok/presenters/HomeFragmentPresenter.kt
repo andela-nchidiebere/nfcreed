@@ -31,11 +31,6 @@ class HomeFragmentPresenter(private val view: View) : FragmentPresenter {
     fun closeApp()
 
     fun toastNotice(message: String)
-
-    fun setupForeGroundDispatch()
-
-    fun stopForeGroundDispatch()
-
   }
 
 }
