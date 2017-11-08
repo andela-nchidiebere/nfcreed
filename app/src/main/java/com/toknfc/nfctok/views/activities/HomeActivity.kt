@@ -14,7 +14,6 @@ import com.toknfc.nfctok.R.string
 import com.toknfc.nfctok.core.BUNDLE_TAG_PAYLOAD
 import com.toknfc.nfctok.core.BasicFragmentManager
 import com.toknfc.nfctok.core.CoreActivity
-import com.toknfc.nfctok.core.MIME_TYPE
 import com.toknfc.nfctok.core.NFC_BUNDLE_KEY
 import com.toknfc.nfctok.presenters.HomeActivityPresenter
 import com.toknfc.nfctok.views.fragments.HomeFragment
@@ -85,24 +84,19 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
     val action = intent.action
     when (action) {
       NfcAdapter.ACTION_NDEF_DISCOVERED -> {
-        val type = intent.type
-        if (type == MIME_TYPE) {
-          intent.apply {
-            val tag2 = Ndef.get(getParcelableExtra(NfcAdapter.EXTRA_TAG))
-            try {
-              tag2.connect()
-            } catch (ioe: IOException) {
-              Toast.makeText(this@HomeActivity, getString(string.connecterror), Toast
-                  .LENGTH_LONG).show()
-              return
-            }
-            tag2.cachedNdefMessage.records
-                .forEach {message ->
-                  presenter.handlePayloadFromNfcTag(String(message.payload), message.id)
-                }
+        intent.apply {
+          val tag2 = Ndef.get(getParcelableExtra(NfcAdapter.EXTRA_TAG))
+          try {
+            tag2.connect()
+          } catch (ioe: IOException) {
+            Toast.makeText(this@HomeActivity, getString(string.connecterror), Toast
+                .LENGTH_LONG).show()
+            return
           }
-        } else {
-          getSnackbar(getString(string.wrongMimeType)).show()
+          tag2.cachedNdefMessage.records
+              .forEach {message ->
+                presenter.handlePayloadFromNfcTag(String(message.payload), message.id)
+              }
         }
       }
       NfcAdapter.ACTION_TECH_DISCOVERED -> {
@@ -114,8 +108,7 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
             getSnackbar("Discovered NFC Tech with ${message.records.size} records").show()
           } catch (ile: IllegalStateException) {
             nfcIntent = this
-            showWriteToNfcTagScreen()
-            //getSnackbar("Tag is empty").setAction("Write to Tag?", {showWriteToNfcTagScreen()})
+            getSnackbar("Tag is empty").setAction("Write to Tag?", {showWriteToNfcTagScreen()})
           }
         }
       }

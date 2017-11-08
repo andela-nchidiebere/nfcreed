@@ -8,7 +8,6 @@ import android.nfc.Tag
 import android.nfc.tech.Ndef
 import android.nfc.tech.NdefFormatable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -141,9 +140,7 @@ class WriteToNfcTagFragment : CoreFragment(), WriteToNfcTagFragmentPresenter.Vie
     val firstName = fragmentWriteNfcEtFirstName.text.toString()
     val lastName = fragmentWriteNfcEtLastName.text.toString()
     val role = fragmentWriteNfcSpRoles.selectedItem.toString()
-    val payload = "First name: $firstName\nLast name: $lastName\nRole: $role"
-    Log.d("fhjdk", payload)
-    return payload
+    return "First name: $firstName\nLast name: $lastName\nRole: $role"
   }
 
   companion object {
