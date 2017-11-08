@@ -7,6 +7,16 @@
   <string name="connecterror">Error connecting for NFC Tag</string>
   <string name="wrongMimeType">Wrong mime type</string>
   <string name="nullRawMessage">RawMessages is null</string>
+  <string name="discoveredNfc">Discovered NFC Tech with</string>
+  <string name="records">records</string>
+  <string name="message_too_large">Message too large</string>
+  <string name="message_written_successfully">Message successfully written to Tag</string>
+  <string name="read_only_tag">Tag is read only</string>
+  <string name="write_operation_failed">Write operation faled</string>
+  <string name="failed_to_format">Failed to format tag</string>
+  <string name="first_name">First name:</string>
+  <string name="last_name">Last name:</string>
+  <string name="role">Role:</string>
   <string-array name="roles_array">
     <item>Fellow</item>
     <item>STC</item>

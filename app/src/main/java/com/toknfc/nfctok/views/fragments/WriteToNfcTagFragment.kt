@@ -13,7 +13,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.toknfc.nfctok.R
+import com.toknfc.nfctok.R.string
 import com.toknfc.nfctok.core.CoreFragment
+import com.toknfc.nfctok.core.NFC_PATH_PREFIX
 import com.toknfc.nfctok.core.WRITE_TO_NFC_TAG_FRAGMENT_TAG
 import com.toknfc.nfctok.exceptions.MessageTooLargeException
 import com.toknfc.nfctok.exceptions.NdefNotSupportedException
@@ -60,11 +62,11 @@ class WriteToNfcTagFragment : CoreFragment(), WriteToNfcTagFragmentPresenter.Vie
 
   override fun handleError(throwable: Throwable) {
     when (throwable) {
-      is MessageTooLargeException -> showToast("Message too large")
-      is ReadOnlyTagException -> showToast("Tag is read only")
-      is NdefNotSupportedException -> showToast("Ndef not supported by tag")
-      is IOException -> showToast("Failed to format tag")
-      is WriteOperationFailedException -> showToast("Write operation faled")
+      is MessageTooLargeException -> showToast(getString(string.message_too_large))
+      is ReadOnlyTagException -> showToast(getString(string.read_only_tag))
+      is NdefNotSupportedException -> showToast(getString(string.ndef_not_supported))
+      is IOException -> showToast(getString(string.failed_to_format))
+      is WriteOperationFailedException -> showToast(getString(string.write_operation_failed))
     }
   }
 
@@ -77,7 +79,7 @@ class WriteToNfcTagFragment : CoreFragment(), WriteToNfcTagFragmentPresenter.Vie
   }
 
   override fun createNfcMessage(): Boolean {
-    val pathPrefix = "chidijustice.com:nfcapp"
+    val pathPrefix = NFC_PATH_PREFIX
     val payload = fetchPayload()
     val nfcRecord = NdefRecord(NdefRecord.TNF_EXTERNAL_TYPE,
         pathPrefix.toByteArray(),
@@ -97,41 +99,37 @@ class WriteToNfcTagFragment : CoreFragment(), WriteToNfcTagFragmentPresenter.Vie
   private fun writeMessageToTag(nfcMessage: NdefMessage, tag: Tag?): Boolean {
     try {
       val nDefTag = Ndef.get(tag)
-
       nDefTag?.let {
         it.connect()
         if (it.maxSize < nfcMessage.toByteArray().size) {
-          throw MessageTooLargeException("Message too large")
+          throw MessageTooLargeException(getString(string.message_too_large))
         }
         if (it.isWritable) {
           it.writeNdefMessage(nfcMessage)
           it.close()
-          Toast.makeText(context, "Message successfully written to Tag", Toast.LENGTH_LONG).show()
+          showToast(getString(string.message_written_successfully))
           (context as HomeActivity).navigateBack()
           return true
         } else {
-          throw ReadOnlyTagException("Tag is read only")
+          throw ReadOnlyTagException(getString(string.read_only_tag))
         }
       }
-
       val nDefFormatableTag = NdefFormatable.get(tag)
-
       nDefFormatableTag?.let {
         try {
           it.connect()
           it.format(nfcMessage)
           it.close()
-          Toast.makeText(context, "Message successfully written to Tag", Toast.LENGTH_LONG).show()
+          showToast(getString(string.message_written_successfully))
           return true
         } catch (e: IOException) {
           handleError(e)
           return false
         }
       }
-      throw NdefNotSupportedException("Ndef not supported")
-
+      throw NdefNotSupportedException(getString(string.ndef_not_supported))
     } catch (e: Exception) {
-      throw WriteOperationFailedException("Write operation failed")
+      throw WriteOperationFailedException(getString(string.write_operation_failed))
     }
   }
 
@@ -140,7 +138,8 @@ class WriteToNfcTagFragment : CoreFragment(), WriteToNfcTagFragmentPresenter.Vie
     val firstName = fragmentWriteNfcEtFirstName.text.toString()
     val lastName = fragmentWriteNfcEtLastName.text.toString()
     val role = fragmentWriteNfcSpRoles.selectedItem.toString()
-    return "First name: $firstName\nLast name: $lastName\nRole: $role"
+    return "${getString(string.first_name)} $firstName\n${getString(string.last_name)} " +
+        "$lastName\n${getString(string.role)} $role"
   }
 
   companion object {

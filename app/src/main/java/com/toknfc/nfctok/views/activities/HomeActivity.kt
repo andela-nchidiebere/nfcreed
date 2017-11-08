@@ -94,7 +94,7 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
             return
           }
           tag2.cachedNdefMessage.records
-              .forEach {message ->
+              .forEach { message ->
                 presenter.handlePayloadFromNfcTag(String(message.payload), message.id)
               }
         }
@@ -103,9 +103,11 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
         intent.apply {
           val rawMessages = getParcelableArrayListExtra<Parcelable>(NfcAdapter.EXTRA_NDEF_MESSAGES)
           try {
-            val ndefMessage = checkNotNull(rawMessages) {getString(string.nullRawMessage)}
+            val ndefMessage = checkNotNull(rawMessages) { getString(string.nullRawMessage) }
             val message: NdefMessage = ndefMessage[0] as NdefMessage
-            getSnackbar("Discovered NFC Tech with ${message.records.size} records").show()
+            getSnackbar("${getString(string.discoveredNfc)} ${message.records.size} ${getString
+            (string.records)}")
+                .show()
           } catch (ile: IllegalStateException) {
             nfcIntent = this
             showWriteToNfcTagScreen()
