@@ -95,7 +95,8 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
             val message: NdefMessage = ndefMessage[0] as NdefMessage
             getSnackbar("Discovered NFC Tech with ${message.records.size} records").show()
           } catch (ile: IllegalStateException) {
-            getSnackbar("Tag is empty").setAction("Write to Tag?", {showWriteToNfcTagScreen()})
+            showWriteToNfcTagScreen()
+            //getSnackbar("Tag is empty").setAction("Write to Tag?", {showWriteToNfcTagScreen()})
           }
         }
       }

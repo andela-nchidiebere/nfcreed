@@ -24,7 +24,7 @@ class WriteToNfcTagFragment : CoreFragment() {
 
   companion object {
     fun getInstance(): WriteToNfcTagFragment {
-      return getInstance()
+      return WriteToNfcTagFragment()
     }
   }
 }

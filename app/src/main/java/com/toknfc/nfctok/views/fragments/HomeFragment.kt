@@ -119,9 +119,6 @@ class HomeFragment : CoreFragment(), HomeFragmentPresenter.View {
     return intentFilter
   }
 
-  /**
-   * Navigates to screen for creating a profile which is to be written to an NFC tag
-   */
   override fun showWriteToNfcTagScreen() {
     (context as HomeActivity).showWriteToNfcTagScreen()
   }
