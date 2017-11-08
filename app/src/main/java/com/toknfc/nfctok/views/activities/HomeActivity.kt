@@ -48,6 +48,14 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
     outState.putParcelable(NFC_BUNDLE_KEY, nfcIntent)
   }
 
+  override fun onBackPressed() {
+    if (supportFragmentManager.backStackEntryCount > 1) {
+      fm.popUp()
+    } else {
+      finish()
+    }
+  }
+
   override fun onRestoreInstanceState(savedInstanceState: Bundle) {
     super.onRestoreInstanceState(savedInstanceState)
     nfcIntent = savedInstanceState.getParcelable(NFC_BUNDLE_KEY)
@@ -88,15 +96,16 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
           val tag2 = Ndef.get(getParcelableExtra(NfcAdapter.EXTRA_TAG))
           try {
             tag2.connect()
+            tag2.cachedNdefMessage.records
+                .forEach { message ->
+                  presenter.handlePayloadFromNfcTag(String(message.payload), message.id)
+                }
+            tag2.close()
           } catch (ioe: IOException) {
             Toast.makeText(this@HomeActivity, getString(string.connecterror), Toast
                 .LENGTH_LONG).show()
             return
           }
-          tag2.cachedNdefMessage.records
-              .forEach { message ->
-                presenter.handlePayloadFromNfcTag(String(message.payload), message.id)
-              }
         }
       }
       NfcAdapter.ACTION_TECH_DISCOVERED -> {
