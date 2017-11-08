@@ -3,11 +3,9 @@ package com.toknfc.nfctok.views.activities
 import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
-import android.nfc.tech.Ndef
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.design.widget.Snackbar
-import android.widget.Toast
 import com.toknfc.nfctok.R
 import com.toknfc.nfctok.R.layout
 import com.toknfc.nfctok.R.string
@@ -20,7 +18,6 @@ import com.toknfc.nfctok.views.fragments.HomeFragment
 import com.toknfc.nfctok.views.fragments.TagInformationFragment
 import com.toknfc.nfctok.views.fragments.WriteToNfcTagFragment
 import kotlinx.android.synthetic.main.activity_home.root
-import java.io.IOException
 
 
 class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
@@ -93,18 +90,11 @@ class HomeActivity : CoreActivity(), HomeActivityPresenter.View {
     when (action) {
       NfcAdapter.ACTION_NDEF_DISCOVERED -> {
         intent.apply {
-          val tag2 = Ndef.get(getParcelableExtra(NfcAdapter.EXTRA_TAG))
-          try {
-            tag2.connect()
-            tag2.cachedNdefMessage.records
-                .forEach { message ->
-                  presenter.handlePayloadFromNfcTag(String(message.payload), message.id)
-                }
-            tag2.close()
-          } catch (ioe: IOException) {
-            Toast.makeText(this@HomeActivity, getString(string.connecterror), Toast
-                .LENGTH_LONG).show()
-            return
+          val tag2: Array<Parcelable>? = getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
+          tag2 ?: return
+          val ndefMessage = tag2[0] as NdefMessage
+          ndefMessage.records.forEach { message ->
+            presenter.handlePayloadFromNfcTag(String(message.payload), message.id)
           }
         }
       }
