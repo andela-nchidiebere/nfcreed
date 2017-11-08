@@ -33,10 +33,7 @@
       <meta-data
           android:name="android.nfc.action.TECH_DISCOVERED"
           android:resource="@xml/tech_list" />
-
-
     </activity>
-    <activity android:name=".core.CoreActivity"/>
   </application>
 
 </manifest>
