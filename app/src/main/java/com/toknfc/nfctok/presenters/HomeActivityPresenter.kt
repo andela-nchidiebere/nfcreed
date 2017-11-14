@@ -12,7 +12,7 @@ class HomeActivityPresenter(private val view: View) : Presenter {
     view.showHomeScreen()
   }
 
-  fun handlePayloadFromNfcTag(payload: String, hasId: ByteArray?) {
+  fun handlePayloadFromNfcTag(payload: String) {
     view.openTagInfoScreen(payload)
   }
 

@@ -1,18 +1,16 @@
 package com.toknfc.nfctok.views.activities
 
 import android.content.Intent
-import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.os.Parcelable
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import com.toknfc.nfctok.R
 import com.toknfc.nfctok.R.layout
-import com.toknfc.nfctok.R.string
 import com.toknfc.nfctok.core.BUNDLE_TAG_PAYLOAD
 import com.toknfc.nfctok.core.BasicFragmentManager
 import com.toknfc.nfctok.core.NFC_BUNDLE_KEY
+import com.toknfc.nfctok.extensions.parseArrayExtra
+import com.toknfc.nfctok.extensions.parseArrayListExtra
 import com.toknfc.nfctok.presenters.HomeActivityPresenter
 import com.toknfc.nfctok.views.fragments.HomeFragment
 import com.toknfc.nfctok.views.fragments.TagInformationFragment
@@ -30,10 +28,6 @@ class HomeActivity : AppCompatActivity(), HomeActivityPresenter.View {
   }
 
   lateinit var nfcIntent: Intent
-
-  private fun getSnackbar(message: String): Snackbar {
-    return Snackbar.make(root, message, Snackbar.LENGTH_LONG)
-  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -90,27 +84,15 @@ class HomeActivity : AppCompatActivity(), HomeActivityPresenter.View {
     when (action) {
       NfcAdapter.ACTION_NDEF_DISCOVERED -> {
         intent.apply {
-          val tag2: Array<Parcelable>? = getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
-          tag2 ?: return
-          val ndefMessage = tag2[0] as NdefMessage
-          ndefMessage.records.forEach { message ->
-            presenter.handlePayloadFromNfcTag(String(message.payload), message.id)
+          parseArrayExtra { payload ->
+            presenter.handlePayloadFromNfcTag(payload)
           }
         }
       }
       NfcAdapter.ACTION_TECH_DISCOVERED -> {
         intent.apply {
-          val rawMessages = getParcelableArrayListExtra<Parcelable>(NfcAdapter.EXTRA_NDEF_MESSAGES)
-          try {
-            val ndefMessage = checkNotNull(rawMessages) { getString(string.nullRawMessage) }
-            val message: NdefMessage = ndefMessage[0] as NdefMessage
-            getSnackbar("${getString(string.discoveredNfc)} ${message.records.size} ${getString
-            (string.records)}")
-                .show()
-          } catch (ile: IllegalStateException) {
-            nfcIntent = this
-            showWriteToNfcTagScreen()
-          }
+          nfcIntent = this
+          parseArrayListExtra(this@HomeActivity, root, {showWriteToNfcTagScreen()})
         }
       }
     }
